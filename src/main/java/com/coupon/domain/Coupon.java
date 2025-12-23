@@ -61,10 +61,13 @@ public class Coupon {
         if (code.length() < 6)
             throw new CouponInvalidException("Código do cupom menor que o tamanho padrão (6).");
 
-        if (!TextUtils.isAlphanumeric(code)) {
+        if (TextUtils.isNonAlphanumeric(code)) {
             String cleanedCode = code.replaceAll("[^a-zA-Z0-9]", "");
 
-            if (cleanedCode.length() == 6) this.code = cleanedCode;
+            if (cleanedCode.length() == 6) {
+                this.code = cleanedCode;
+                return;
+            }
 
             throw new CouponInvalidException("Código do cupom " + cleanedCode + " com tamanho inválido. Tamanho padrão (6)");
         }
