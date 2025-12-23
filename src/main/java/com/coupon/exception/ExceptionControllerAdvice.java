@@ -11,13 +11,20 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Exception> handleGlobalException(Exception ex, WebRequest request) {
-        return new ResponseEntity<Exception>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(CouponInvalidException.class)
-    public ResponseEntity<ErrorMessage> handleGlobalException(CouponInvalidException ex, WebRequest request) {
+    public ResponseEntity<ErrorMessage> handleCouponInvalidException(CouponInvalidException ex, WebRequest request) {
         ErrorMessage error = new ErrorMessage(HttpStatus.BAD_REQUEST, ex.getMessage());
 
-        return new ResponseEntity<ErrorMessage>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CouponNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleCouponNotFoundException(CouponNotFoundException ex, WebRequest request) {
+        ErrorMessage error = new ErrorMessage(HttpStatus.NOT_FOUND, ex.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 }

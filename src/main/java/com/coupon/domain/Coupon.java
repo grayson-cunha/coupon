@@ -15,7 +15,6 @@ public class Coupon {
     @NotNull
     @DecimalMin(value = "0.5", message = "Min value should be 0.5 or greater")
     private Double discountValue;
-    @NotEmpty
     @Future(message = "Expiration date should be in the future")
     private LocalDateTime expirationDate;
 

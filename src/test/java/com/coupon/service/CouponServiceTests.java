@@ -2,6 +2,7 @@ package com.coupon.service;
 
 import com.coupon.domain.Coupon;
 import com.coupon.exception.CouponInvalidException;
+import com.coupon.exception.CouponNotFoundException;
 import com.coupon.repository.CouponRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,9 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,5 +65,28 @@ public class CouponServiceTests {
         assertNotNull(actualValue);
         assertEquals(createdCoupon.getId(), actualValue.getId());
         assertEquals("AH43H1", actualValue.getCode());
+    }
+
+    @Test
+    public void givenCouponId_whenNotExists_thenThrowCouponNotFoundException() {
+        when(couponRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        var exception = assertThrows(CouponNotFoundException.class, () -> {
+            couponService.delete(1L);
+        });
+
+        assertEquals(exception.getMessage(), "Coupon com o id 1 não encontrado.");
+    }
+
+    @Test
+    public void givenCouponId_whenIdIsValid_thenDeleteAndReturnDeletedItem() {
+        var expirationDate = LocalDateTime.now().plusDays(1);
+        var coupon = new com.coupon.entity.Coupon(1L,"AH43H", "Coupon de Natal", 0.5, expirationDate);
+
+        when(couponRepository.findById(anyLong())).thenReturn(Optional.of(coupon));
+
+        var deletedCoupon = couponService.delete(1L);
+
+        assertEquals(1L, deletedCoupon.getId());
     }
 }
